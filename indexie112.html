@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+    #div {
+        width: 500px;
+        height: 70px;
+        padding: 10px;
+    }
+    #source {
+        width: 150px;
+        height: 20px;
+        padding:10px;
+        color: blue;
+        border: 1px solid black;
+    }
+    #target {
+        width: auto;
+        height: 70px;
+        padding: 10px;
+        border: 1px solid #aaaaaa;
+    }
+</style>
+<script>
+    var datatype = [];
+    var datatype_value = '';
+    const uri1 = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtQ_NqOyPiB_Xwba8EgziR2cCpQd4zWm05qE33ns7WNynbxflY";
+    const uri2 = "https://www.bmwjamaica.com/content/dam/bmw/common/all-models/m-series/m4-convertible/2017/images-and-videos/images/BMW-m4-convertible-images-and-videos-1920x1200-06.jpg.asset.1487344406677.jpg";
+    const img_tag = '<img id="source "src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtQ_NqOyPiB_Xwba8EgziR2cCpQd4zWm05qE33ns7WNynbxflY" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);" draggable="true" />';
+    
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function setdata(type){
+                if(type == 'text'){
+                    if( datatype.indexOf(type) == -1){
+                        datatype.push(type);
+                        document.getElementById("para2").innerHTML = datatype;
+                    }
+                    else
+                        alert (" Datatype already exists");
+                        
+                }
+                else{
+                /*else if  (type == 'text/uri-list'){
+                    if( datatype.indexOf(type) == -1){
+                        datatype.push(type);
+                        document.getElementById("para2").innerHTML = datatype;
+                }
+                else
+                    alert (" Datatype already exists");
+                        
+                }
+                else if (type == 'text/html'){
+                    if( datatype.indexOf(type) == -1){
+                        datatype.push(type);
+                        document.getElementById("para2").innerHTML = datatype;
+                }
+                else*/
+                    alert ("IE only support 'Text' Datatype");                    
+                }
+    }
+
+    function drag(ev) {
+        console.log('drag');
+        for(var i = 0; i< datatype.length; i++){
+            if(datatype[i] == 'text') {
+                ev.dataTransfer.setData(datatype[i],uri1);
+                console.log('adding datatype', ev.dataTransfer.types[i],':',ev.dataTransfer.getData(ev.dataTransfer.types[i]));
+            }
+            else if(datatype[i] == 'text/uri-list'){
+                ev.dataTransfer.setData(datatype[i],uri2);
+                console.log('adding datatype', ev.dataTransfer.types[i],':',ev.dataTransfer.getData(ev.dataTransfer.types[i]));
+            }
+            else if (datatype[i] ==  'text/html'){
+                datatype_value = img_tag;
+                ev.dataTransfer.setData(datatype[i],img_tag);
+                console.log('adding datatype', ev.dataTransfer.types[i],':',ev.dataTransfer.getData(ev.dataTransfer.types[i]));
+            }
+                    
+            //console.log("datalist after adding",ev.dataTransfer);
+        }
+        /*console.log('ev',ev.target.id);
+        ev.dataTransfer.setData("text", ev.target.id);
+        console.log(ev.dataTransfer.getData("text"));
+        var u=ev.dataTransfer.getData("text");
+        console.log(document.getElementById(u));
+        */
+    }
+
+    function drop(ev) {
+        console.log('drop');
+        ev.preventDefault();
+
+        console.log(ev.dataTransfer.types[0]);
+        
+        document.getElementById("target").innerHTML = ev.dataTransfer.types[0] + ' ';
+        
+        for (var i = 0; i < datatype.length; i++) {
+            var b=ev.dataTransfer.types[i];
+            if ((ev.dataTransfer.types[i].match('^Text'))) {
+                var s = (ev.dataTransfer.getData(b));
+                    var a=document.getElementById("target").innerHTML;
+                    document.getElementById("target").innerHTML = a+s;
+                
+        }
+        }
+    }
+</script>
+</head>
+<body>
+
+    <div>
+        <p id= "source" draggable="true" ondragstart="drag(event)">Drag data</p>
+    </div>
+    <div>
+        <br>
+        <p>Add Datatypes:</p>
+        <button onclick="setdata('text')">text : url</button>                
+        <button onclick="setdata('text/uri-list')">text/uri-list : url</button>
+        <button onclick="setdata('text/html')">text/html : img tag</button>
+    </div>
+    <br>
+    <div><p>Datatypes List: </p><p id="para2"></p></div>
+    <br><br><p>Drop Here:</p><div id="target" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+</body>
+</html>
